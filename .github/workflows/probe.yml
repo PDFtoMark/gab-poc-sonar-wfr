@@ -1,0 +1,16 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "PATH=$PATH"
+          echo "RUNNER_TOOL_CACHE=$RUNNER_TOOL_CACHE"
+          id
+          ls -ld /opt/hostedtoolcache || true
+          test -w /opt/hostedtoolcache && echo TOOLCACHE_WRITABLE || echo TOOLCACHE_NOT_WRITABLE
+          ls -ld /home/runner/work/_actions 2>/dev/null || true
+          test -w /home/runner/work/_actions && echo ACTIONS_WRITABLE || echo ACTIONS_NOT_WRITABLE
+          ls /home/runner/work/_actions 2>/dev/null | head
+          which sonar-scanner || echo no-sonar-scanner
